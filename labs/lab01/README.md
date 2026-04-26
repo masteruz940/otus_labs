@@ -150,8 +150,8 @@ IPv6-адресация в этой работе только задокумен
 
 | Устройство | Конфигурация |
 |---|---|
-| `spine-1` | [configs/spine-1.cfg](configs/spine-1.cfg) |
-| `spine-2` | [configs/spine-2.cfg](configs/spine-2.cfg) |
-| `leaf-1` | [configs/leaf-1.cfg](configs/leaf-1.cfg) |
-| `leaf-2` | [configs/leaf-2.cfg](configs/leaf-2.cfg) |
-| `leaf-3` | [configs/leaf-3.cfg](configs/leaf-3.cfg) |
+| `spine-1` | [configs/spine-1.eos](configs/spine-1.eos) |
+| `spine-2` | [configs/spine-2.eos](configs/spine-2.eos) |
+| `leaf-1` | [configs/leaf-1.eos](configs/leaf-1.eos) |
+| `leaf-2` | [configs/leaf-2.eos](configs/leaf-2.eos) |
+| `leaf-3` | [configs/leaf-3.eos](configs/leaf-3.eos) |

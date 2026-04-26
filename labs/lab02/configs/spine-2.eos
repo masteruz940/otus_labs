@@ -1,0 +1,65 @@
+hostname spine-2
+!
+ip routing
+ipv6 unicast-routing
+!
+interface Loopback0
+   ip address 172.16.1.2/32
+   ip ospf area 0.0.0.0
+   ipv6 address fd00:172:1::2/128
+   ipv6 ospf 65000 area 0.0.0.0
+!
+interface Ethernet1
+   description to-leaf-1
+   no switchport
+   ip address 10.2.1.0/31
+   ip ospf area 0.0.0.0
+   ip ospf authentication message-digest
+   ip ospf message-digest-key 1 md5 0 X5RWLmD3yvyXQ8qu
+   ip ospf network point-to-point
+   ip ospf neighbor bfd
+   ipv6 address fd00:10:2:1::/127
+   ipv6 ospf 65000 area 0.0.0.0
+   ospfv3 network point-to-point
+   bfd interval 100 min-rx 100 multiplier 3
+   no shutdown
+!
+interface Ethernet2
+   description to-leaf-2
+   no switchport
+   ip address 10.2.2.0/31
+   ip ospf area 0.0.0.0
+   ip ospf authentication message-digest
+   ip ospf message-digest-key 1 md5 0 X5RWLmD3yvyXQ8qu
+   ip ospf network point-to-point
+   ip ospf neighbor bfd
+   ipv6 address fd00:10:2:2::/127
+   ipv6 ospf 65000 area 0.0.0.0
+   ospfv3 network point-to-point
+   bfd interval 100 min-rx 100 multiplier 3
+   no shutdown
+!
+interface Ethernet3
+   description to-leaf-3
+   no switchport
+   ip address 10.2.3.0/31
+   ip ospf area 0.0.0.0
+   ip ospf authentication message-digest
+   ip ospf message-digest-key 1 md5 0 X5RWLmD3yvyXQ8qu
+   ip ospf network point-to-point
+   ip ospf neighbor bfd
+   ipv6 address fd00:10:2:3::/127
+   ipv6 ospf 65000 area 0.0.0.0
+   ospfv3 network point-to-point
+   bfd interval 100 min-rx 100 multiplier 3
+   no shutdown
+!
+router ospf 65000
+   router-id 172.16.1.2
+   passive-interface default
+   no passive-interface Ethernet1-3
+!
+ipv6 router ospf 65000
+   router-id 172.16.1.2
+   passive-interface default
+   no passive-interface Ethernet1-3

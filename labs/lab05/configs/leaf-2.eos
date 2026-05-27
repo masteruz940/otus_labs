@@ -1,0 +1,99 @@
+hostname leaf-2
+!
+service routing protocols model multi-agent
+!
+vlan 10
+   name v0010-zone-1
+!
+ip routing
+ipv6 unicast-routing
+!
+interface Loopback0
+   ip address 172.16.10.2/32
+   ipv6 address fd00:172:10::2/128
+!
+interface Ethernet1
+   description to-spine-1
+   no switchport
+   ip address 10.1.2.1/31
+   ipv6 address fd00:10:1:2::1/127
+   bfd interval 500 min-rx 500 multiplier 3
+   no shutdown
+!
+interface Ethernet2
+   description to-spine-2
+   no switchport
+   ip address 10.2.2.1/31
+   ipv6 address fd00:10:2:2::1/127
+   bfd interval 500 min-rx 500 multiplier 3
+   no shutdown
+!
+interface Ethernet3
+   description zone-1-client-2
+   switchport mode access
+   switchport access vlan 10
+   spanning-tree portfast
+   no shutdown
+!
+interface Vxlan1
+   vxlan source-interface Loopback0
+   vxlan udp-port 4789
+   vxlan vlan 10 vni 10010
+!
+router bgp 65000
+   router-id 172.16.10.2
+   bgp bestpath as-path multipath-relax match 1
+   maximum-paths 10
+   neighbor 10.1.2.0 remote-as 65100
+   neighbor 10.1.2.0 local-as 65202 no-prepend replace-as
+   neighbor 10.1.2.0 bfd
+   neighbor 10.1.2.0 password X5RWLmD3yvyXQ8qu
+   neighbor 10.1.2.0 send-community
+   neighbor 10.1.2.0 timers 10 30
+   neighbor 10.2.2.0 remote-as 65100
+   neighbor 10.2.2.0 local-as 65202 no-prepend replace-as
+   neighbor 10.2.2.0 bfd
+   neighbor 10.2.2.0 password N7qV2pL9sT4xWc6a
+   neighbor 10.2.2.0 send-community
+   neighbor 10.2.2.0 timers 10 30
+   neighbor 172.16.1.1 remote-as 65000
+   neighbor 172.16.1.1 update-source Loopback0
+   neighbor 172.16.1.1 send-community
+   neighbor 172.16.1.1 send-community extended
+   neighbor 172.16.1.1 timers 10 30
+   neighbor 172.16.1.2 remote-as 65000
+   neighbor 172.16.1.2 update-source Loopback0
+   neighbor 172.16.1.2 send-community
+   neighbor 172.16.1.2 send-community extended
+   neighbor 172.16.1.2 timers 10 30
+   neighbor fd00:10:1:2:: remote-as 65100
+   neighbor fd00:10:1:2:: local-as 65202 no-prepend replace-as
+   neighbor fd00:10:1:2:: bfd
+   neighbor fd00:10:1:2:: password X5RWLmD3yvyXQ8qu
+   neighbor fd00:10:1:2:: send-community
+   neighbor fd00:10:1:2:: timers 10 30
+   neighbor fd00:10:2:2:: remote-as 65100
+   neighbor fd00:10:2:2:: local-as 65202 no-prepend replace-as
+   neighbor fd00:10:2:2:: bfd
+   neighbor fd00:10:2:2:: password N7qV2pL9sT4xWc6a
+   neighbor fd00:10:2:2:: send-community
+   neighbor fd00:10:2:2:: timers 10 30
+   network 172.16.10.2/32
+   !
+   vlan 10
+      rd 172.16.10.2:10010
+      route-target both 65000:10010
+      redistribute learned
+   !
+   address-family evpn
+      neighbor 172.16.1.1 activate
+      neighbor 172.16.1.2 activate
+   !
+   address-family ipv4
+      no neighbor 172.16.1.1 activate
+      no neighbor 172.16.1.2 activate
+   !
+   address-family ipv6
+      neighbor fd00:10:1:2:: activate
+      neighbor fd00:10:2:2:: activate
+      network fd00:172:10::2/128

@@ -1,0 +1,9 @@
+hostname client-3
+!
+ip routing
+!
+interface Ethernet1
+   description to-leaf-3-Ethernet3
+   no switchport
+   ip address 192.168.10.13/24
+   no shutdown

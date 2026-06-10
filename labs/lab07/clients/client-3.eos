@@ -1,0 +1,32 @@
+hostname client-3
+!
+vlan 30
+   name v0030-client-3
+!
+ip routing
+!
+interface Port-Channel30
+   description esi-lag-to-leaf-2-leaf-3
+   switchport mode trunk
+   switchport trunk allowed vlan 30
+!
+interface Ethernet1
+   description to-leaf-2-Ethernet4
+   switchport mode trunk
+   switchport trunk allowed vlan 30
+   channel-group 30 mode active
+   no shutdown
+!
+interface Ethernet2
+   description to-leaf-3-Ethernet3
+   switchport mode trunk
+   switchport trunk allowed vlan 30
+   channel-group 30 mode active
+   no shutdown
+!
+interface Vlan30
+   description client-3-l3-interface
+   ip address 192.168.30.13/24
+   no shutdown
+!
+ip route 0.0.0.0/0 192.168.30.1

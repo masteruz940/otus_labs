@@ -1,0 +1,134 @@
+hostname leaf-2
+!
+service routing protocols model multi-agent
+!
+link tracking group CORE-TRACKING
+   recovery delay 1
+!
+vlan 20
+   name v0020-client-2
+!
+vlan 30
+   name v0030-client-3-multihomed
+!
+vrf instance TENANT-1
+!
+ip virtual-router mac-address 00:00:00:00:00:01
+!
+ip routing
+ip routing vrf TENANT-1
+ipv6 unicast-routing
+!
+interface Loopback0
+   ip address 172.16.10.2/32
+   ipv6 address fd00:172:10::2/128
+!
+interface Ethernet1
+   description to-spine-1
+   no switchport
+   ipv6 enable
+   bfd interval 500 min-rx 500 multiplier 3
+   link tracking group CORE-TRACKING upstream
+   no shutdown
+!
+interface Ethernet2
+   description to-spine-2
+   no switchport
+   ipv6 enable
+   bfd interval 500 min-rx 500 multiplier 3
+   link tracking group CORE-TRACKING upstream
+   no shutdown
+!
+interface Ethernet3
+   description client-2
+   switchport mode access
+   switchport access vlan 20
+   spanning-tree portfast
+   no shutdown
+!
+interface Ethernet4
+   description client-3-esi-lag
+   switchport mode trunk
+   switchport trunk allowed vlan 30
+   channel-group 30 mode active
+   link tracking group CORE-TRACKING downstream
+   no shutdown
+!
+interface Port-Channel30
+   description client-3-esi-lag
+   switchport mode trunk
+   switchport trunk allowed vlan 30
+   !
+   evpn ethernet-segment
+      identifier 0000:0000:0000:0000:0030
+      designated-forwarder election algorithm preference 200
+      route-target import 00:00:00:00:00:30
+   lacp system-id 0200.0000.0030
+!
+interface Vlan20
+   description client-2-gateway
+   vrf TENANT-1
+   ip address virtual 192.168.20.1/24
+   no shutdown
+!
+interface Vlan30
+   description client-3-anycast-gateway
+   vrf TENANT-1
+   ip address virtual 192.168.30.1/24
+   no shutdown
+!
+interface Vxlan1
+   vxlan source-interface Loopback0
+   vxlan udp-port 4789
+   vxlan encapsulation ipv6
+   vxlan vlan 20 vni 10020
+   vxlan vlan 30 vni 10030
+   vxlan vrf TENANT-1 vni 10100
+   vxlan learn-restrict any
+!
+router bgp 65000
+   router-id 172.16.10.2
+   bgp bestpath as-path multipath-relax match 1
+   maximum-paths 10
+   neighbor pg-spines peer group
+   neighbor pg-spines remote-as 65100
+   neighbor pg-spines local-as 65202 no-prepend replace-as
+   neighbor pg-spines bfd
+   neighbor pg-spines send-community
+   neighbor pg-spines timers 10 30
+   neighbor interface Ethernet1 peer-group pg-spines remote-as 65100
+   neighbor interface Ethernet2 peer-group pg-spines remote-as 65100
+   neighbor fd00:172:1::1 remote-as 65000
+   neighbor fd00:172:1::1 update-source Loopback0
+   neighbor fd00:172:1::1 send-community
+   neighbor fd00:172:1::1 send-community extended
+   neighbor fd00:172:1::1 timers 10 30
+   neighbor fd00:172:1::2 remote-as 65000
+   neighbor fd00:172:1::2 update-source Loopback0
+   neighbor fd00:172:1::2 send-community
+   neighbor fd00:172:1::2 send-community extended
+   neighbor fd00:172:1::2 timers 10 30
+   !
+   vlan 20
+      rd 172.16.10.2:10020
+      route-target both 65000:10020
+      redistribute learned
+   !
+   vlan 30
+      rd 172.16.10.2:10030
+      route-target both 65000:10030
+      redistribute learned
+   !
+   address-family evpn
+      neighbor fd00:172:1::1 activate
+      neighbor fd00:172:1::2 activate
+   !
+   address-family ipv6
+      neighbor pg-spines activate
+      network fd00:172:10::2/128
+   !
+   vrf TENANT-1
+      rd 172.16.10.2:10100
+      route-target import evpn 65000:10100
+      route-target export evpn 65000:10100
+      redistribute connected

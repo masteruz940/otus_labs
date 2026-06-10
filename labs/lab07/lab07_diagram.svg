@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="920" viewBox="0 0 1600 920">
+  <defs>
+    <style>
+      .bg { fill: #101214; }
+      .device { fill: #96bfcd; stroke: #c9e7f0; stroke-width: 2; }
+      .host { fill: #d6e8bc; stroke: #f3ffd9; stroke-width: 2; }
+      .link { stroke: #72b7dd; stroke-width: 5; stroke-linecap: round; }
+      .access { stroke: #79d18b; stroke-width: 5; stroke-linecap: round; }
+      .esi { stroke: #f28c18; stroke-width: 6; stroke-linecap: round; }
+      .overlay { stroke: #f5c542; stroke-width: 3; stroke-dasharray: 12 12; fill: none; opacity: .95; }
+      .legend-box { fill: #171b1f; stroke: #38434d; stroke-width: 2; rx: 8; }
+      .legend-line-blue { stroke: #72b7dd; stroke-width: 5; stroke-linecap: round; }
+      .legend-line-green { stroke: #79d18b; stroke-width: 5; stroke-linecap: round; }
+      .legend-line-orange { stroke: #f28c18; stroke-width: 6; stroke-linecap: round; }
+      .legend-line-yellow { stroke: #f5c542; stroke-width: 3; stroke-dasharray: 10 8; stroke-linecap: round; }
+      .title { fill: #f5c542; font: 700 26px Arial, sans-serif; text-anchor: middle; }
+      .label { fill: #f2f8fb; font: 700 24px Arial, sans-serif; text-anchor: middle; }
+      .client { fill: #1d1f21; font: 700 18px Arial, sans-serif; text-anchor: middle; }
+      .legend-title { fill: #f5c542; font: 700 21px Arial, sans-serif; }
+      .legend-text { fill: #f2f8fb; font: 700 16px Arial, sans-serif; }
+      .legend-muted { fill: #a8b3bd; font: 700 15px Arial, sans-serif; }
+      .legend-blue { fill: #7cc8f2; font: 700 16px Arial, sans-serif; }
+      .legend-green { fill: #9be7a7; font: 700 16px Arial, sans-serif; }
+      .legend-orange { fill: #f28c18; font: 700 16px Arial, sans-serif; }
+      .legend-yellow { fill: #f5c542; font: 700 16px Arial, sans-serif; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1600" height="920"/>
+  <text class="title" x="800" y="48">Lab07 VXLAN EVPN Multihoming: ESI-LAG</text>
+
+  <line x1="330" y1="180" x2="160" y2="560" class="link"/>
+  <line x1="330" y1="180" x2="455" y2="560" class="link"/>
+  <line x1="330" y1="180" x2="750" y2="560" class="link"/>
+  <line x1="750" y1="180" x2="160" y2="560" class="link"/>
+  <line x1="750" y1="180" x2="455" y2="560" class="link"/>
+  <line x1="750" y1="180" x2="750" y2="560" class="link"/>
+
+  <path d="M 160 560 C 285 385, 625 385, 750 560" class="overlay"/>
+  <path d="M 160 560 C 270 450, 360 450, 455 560" class="overlay"/>
+  <path d="M 455 560 C 565 450, 660 450, 750 560" class="overlay"/>
+
+  <rect x="270" y="100" width="120" height="120" class="device"/>
+  <text x="330" y="168" class="label">spine-1</text>
+
+  <rect x="690" y="100" width="120" height="120" class="device"/>
+  <text x="750" y="168" class="label">spine-2</text>
+
+  <rect x="100" y="535" width="120" height="120" class="device"/>
+  <text x="160" y="603" class="label">leaf-1</text>
+
+  <rect x="395" y="535" width="120" height="120" class="device"/>
+  <text x="455" y="603" class="label">leaf-2</text>
+
+  <rect x="690" y="535" width="120" height="120" class="device"/>
+  <text x="750" y="603" class="label">leaf-3</text>
+
+  <line x1="160" y1="655" x2="160" y2="770" class="access"/>
+  <line x1="455" y1="655" x2="455" y2="770" class="access"/>
+  <line x1="455" y1="655" x2="590" y2="770" class="esi"/>
+  <line x1="750" y1="655" x2="590" y2="770" class="esi"/>
+
+  <rect x="80" y="770" width="160" height="78" rx="8" class="host"/>
+  <text x="160" y="818" class="client">client-1</text>
+
+  <rect x="375" y="770" width="160" height="78" rx="8" class="host"/>
+  <text x="455" y="818" class="client">client-2</text>
+
+  <rect x="510" y="770" width="160" height="78" rx="8" class="host"/>
+  <text x="590" y="818" class="client">client-3</text>
+
+  <rect x="950" y="100" width="570" height="720" class="legend-box"/>
+  <text x="990" y="145" class="legend-title">Legend</text>
+
+  <line x1="990" y1="180" x2="1070" y2="180" class="legend-line-blue"/>
+  <text x="1095" y="186" class="legend-blue">Underlay</text>
+  <text x="990" y="215" class="legend-muted">eBGP over IPv6 link-local p2p links</text>
+  <text x="990" y="240" class="legend-muted">VTEP source: IPv6 Loopback0 on leafs</text>
+
+  <line x1="990" y1="285" x2="1070" y2="285" class="legend-line-yellow"/>
+  <text x="1095" y="291" class="legend-yellow">EVPN Overlay</text>
+  <text x="990" y="320" class="legend-muted">iBGP EVPN, ASN 65000</text>
+  <text x="990" y="345" class="legend-muted">Spines are route-reflectors</text>
+  <text x="990" y="370" class="legend-muted">L3VNI 10100 / TENANT-1</text>
+
+  <line x1="990" y1="415" x2="1070" y2="415" class="legend-line-green"/>
+  <text x="1095" y="421" class="legend-green">Single-homed Access</text>
+  <text x="990" y="450" class="legend-muted">client-1 on leaf-1, client-2 on leaf-2</text>
+
+  <line x1="990" y1="495" x2="1070" y2="495" class="legend-line-orange"/>
+  <text x="1095" y="501" class="legend-orange">EVPN Multihoming</text>
+  <text x="990" y="530" class="legend-muted">client-3 LACP Port-Channel30 to leaf-2 and leaf-3</text>
+  <text x="990" y="555" class="legend-muted">ESI 0000:0000:0000:0000:0030</text>
+  <text x="990" y="580" class="legend-muted">ESI RT 00:00:00:00:00:30</text>
+
+  <text x="990" y="635" class="legend-title">Client Segments</text>
+  <text x="990" y="665" class="legend-text">client-1  VLAN10 / VNI10010 / 192.168.10.11</text>
+  <text x="990" y="690" class="legend-text">client-2  VLAN20 / VNI10020 / 192.168.20.12</text>
+  <text x="990" y="715" class="legend-text">client-3  VLAN30 / VNI10030 / 192.168.30.13</text>
+  <text x="990" y="740" class="legend-text">Anycast gateways: 192.168.10.1, .20.1, .30.1</text>
+  <text x="990" y="765" class="legend-text">Common L3VNI: 10100</text>
+</svg>

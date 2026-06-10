@@ -6,3 +6,4 @@
 - [Lab04. Underlay. BGP](lab04/)
 - [Lab05. VxLAN. L2 VNI](lab05/)
 - [Lab06. VxLAN. L3 VNI](lab06/)
+- [Lab07. VxLAN. EVPN Multihoming](lab07/)

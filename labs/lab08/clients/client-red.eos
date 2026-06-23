@@ -1,0 +1,11 @@
+hostname client-red
+!
+ip routing
+!
+interface Ethernet1
+   description to-leaf-2-Ethernet3
+   no switchport
+   ip address 10.20.20.12/24
+   no shutdown
+!
+ip route 0.0.0.0/0 10.20.20.1

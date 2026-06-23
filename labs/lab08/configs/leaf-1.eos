@@ -1,0 +1,95 @@
+hostname leaf-1
+!
+service routing protocols model multi-agent
+!
+vlan 10
+   name v0010-blue-client
+!
+vrf instance BLUE
+!
+ip virtual-router mac-address 00:00:00:00:00:01
+!
+ip routing
+ip routing vrf BLUE
+ipv6 unicast-routing
+!
+interface Loopback0
+   ip address 172.16.10.1/32
+   ipv6 address fd00:172:10::1/128
+!
+interface Ethernet1
+   description to-spine-1
+   no switchport
+   ipv6 enable
+   bfd interval 500 min-rx 500 multiplier 3
+   no shutdown
+!
+interface Ethernet2
+   description to-spine-2
+   no switchport
+   ipv6 enable
+   bfd interval 500 min-rx 500 multiplier 3
+   no shutdown
+!
+interface Ethernet3
+   description client-blue
+   switchport mode access
+   switchport access vlan 10
+   spanning-tree portfast
+   no shutdown
+!
+interface Vlan10
+   description blue-client-gateway
+   vrf BLUE
+   ip address virtual 10.10.10.1/24
+   no shutdown
+!
+interface Vxlan1
+   vxlan source-interface Loopback0
+   vxlan udp-port 4789
+   vxlan encapsulation ipv6
+   vxlan vlan 10 vni 10010
+   vxlan vrf BLUE vni 10100
+   vxlan learn-restrict any
+!
+router bgp 65000
+   router-id 172.16.10.1
+   bgp bestpath as-path multipath-relax match 1
+   maximum-paths 10
+   neighbor pg-spines peer group
+   neighbor pg-spines remote-as 65100
+   neighbor pg-spines local-as 65201 no-prepend replace-as
+   neighbor pg-spines bfd
+   neighbor pg-spines send-community
+   neighbor pg-spines timers 10 30
+   neighbor interface Ethernet1 peer-group pg-spines remote-as 65100
+   neighbor interface Ethernet2 peer-group pg-spines remote-as 65100
+   neighbor fd00:172:1::1 remote-as 65000
+   neighbor fd00:172:1::1 update-source Loopback0
+   neighbor fd00:172:1::1 send-community
+   neighbor fd00:172:1::1 send-community extended
+   neighbor fd00:172:1::1 timers 10 30
+   neighbor fd00:172:1::2 remote-as 65000
+   neighbor fd00:172:1::2 update-source Loopback0
+   neighbor fd00:172:1::2 send-community
+   neighbor fd00:172:1::2 send-community extended
+   neighbor fd00:172:1::2 timers 10 30
+   !
+   vlan 10
+      rd 172.16.10.1:10010
+      route-target both 65000:10010
+      redistribute learned
+   !
+   address-family evpn
+      neighbor fd00:172:1::1 activate
+      neighbor fd00:172:1::2 activate
+   !
+   address-family ipv6
+      neighbor pg-spines activate
+      network fd00:172:10::1/128
+   !
+   vrf BLUE
+      rd 172.16.10.1:10100
+      route-target import evpn 65000:10100
+      route-target export evpn 65000:10100
+      redistribute connected

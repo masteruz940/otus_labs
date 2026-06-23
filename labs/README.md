@@ -7,3 +7,4 @@
 - [Lab05. VxLAN. L2 VNI](lab05/)
 - [Lab06. VxLAN. L3 VNI](lab06/)
 - [Lab07. VxLAN. EVPN Multihoming](lab07/)
+- [Lab08. VxLAN. Routing через EVPN Route-Type 5](lab08/)

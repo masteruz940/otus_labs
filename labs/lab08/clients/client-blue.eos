@@ -1,0 +1,11 @@
+hostname client-blue
+!
+ip routing
+!
+interface Ethernet1
+   description to-leaf-1-Ethernet3
+   no switchport
+   ip address 10.10.10.11/24
+   no shutdown
+!
+ip route 0.0.0.0/0 10.10.10.1
